@@ -1,9 +1,29 @@
 function [sun_tables, shade_tables] = run_prosail_batch(unique_LAI, zenith1, az_s_matrix1)
-    mainFolder = "C:\Users\eravishankar\OneDrive - Cal Poly Pomona\NCSU_Agrivoltaics_Paper_AppliedEnergy_2025\Mat_Files\Yuma_APVSS\HPC_02222026\part1\";
-    python_script_path = strrep(fullfile(mainFolder, 'pypro4sail'), '\', '/');
+    % ProSAIL canopy radiative transfer via Python bridge.
+    %
+    % Requires:
+    %   1. The upstream pyPro4SAIL package on the Python path
+    %      (https://github.com/hectornieto/pypro4sail).
+    %   2. The thin wrapper prosail_run.py shipped in python/ at the repo
+    %      root, which exposes run_prosail_single(LAI, skyl, zen, azim).
+    %
+    % Resolution order for the wrapper directory:
+    %   a) PROSAIL_PY_DIR environment variable (full path to the folder
+    %      containing prosail_run.py), if set.
+    %   b) <repo>/python (relative to this .m file).
+    env_dir = getenv('PROSAIL_PY_DIR');
+    if ~isempty(env_dir)
+        python_script_path = env_dir;
+    else
+        here = fileparts(mfilename('fullpath'));
+        python_script_path = fullfile(fileparts(here), 'python');
+    end
+    python_script_path = strrep(python_script_path, '\', '/');
+
     pyrun("import sys")
     pyrun("sys.path.append('" + python_script_path + "')")
-    pyrun("from prosail_run import run_prosail_single")% Build angle bins only for simulated hours
+    pyrun("from prosail_run import run_prosail_single")
+    % Build angle bins only for simulated hours
 
     % Initialize result struct
     result = struct;

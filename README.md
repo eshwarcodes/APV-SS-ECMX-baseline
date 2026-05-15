@@ -21,6 +21,9 @@ the coupled simulation.
 ├── data/                    Reference inputs (hot-mirror optics, PV module
 │                            spectrum, soil + canopy spectra). Large inputs are
 │                            documented but NOT bundled — see data/README.md.
+├── python/                  Thin Python wrapper (prosail_run.py) that the
+│                            MATLAB bridge calls into. Needs upstream pyPro4SAIL
+│                            installed separately — see "ProSAIL" below.
 ├── output/                  Created at runtime. Holds the final baseline
 │                            .mat per crop/config.
 ├── LICENSE                  MIT.
@@ -73,12 +76,49 @@ only the crop-growth state machine differs.
 
 ## Requirements
 
-- MATLAB R2023a or later.
+- MATLAB R2023a or later, with a working Python bridge (`pyenv`) — required
+  for ProSAIL, see next section.
 - Toolboxes used: Statistics and Machine Learning (sampling/discretize),
   Image Processing (`exportgraphics`), Parallel Computing
   (`parfor` in `Main_load_files*.m` is optional — the loops also run serially).
 - Disk: Stage 0 produces ~10–20 GB of intermediate hourly `.mat` files for a
   full year (one APV-SS configuration).
+
+## ProSAIL (canopy radiative transfer)
+
+The Stage-0 radiative pre-compute calls the **pyPro4SAIL** package
+(H. Nieto; GPL-3) through MATLAB's Python bridge to obtain wavelength-resolved
+canopy reflectance and transmittance for ProSAIL leaf parameters fixed in our
+`python/prosail_run.py` wrapper.
+
+`python/prosail_run.py` (bundled in this repo) is the **thin wrapper** that
+sets the leaf-level Prospect-D inputs used in this paper (N=1.5, Chl=40,
+Car=8, EWT=0.01, LMA=0.009, Ant=1.0, hot_spot=0.01, LIDF=(−0.35, −0.15),
+default soil) and calls `pypro4sail.four_sail.foursail`. The upstream
+**pyPro4SAIL** library itself is **not** redistributed (it is GPL-3 with its
+own DOI); install it from source:
+
+```bash
+git clone https://github.com/hectornieto/pypro4sail
+cd pypro4sail
+pip install .
+```
+
+Then either:
+
+- set `PROSAIL_PY_DIR` to the directory containing `prosail_run.py`
+  (i.e. this repo's `python/` folder, or your own copy), or
+- leave it unset — `src/run_prosail_batch.m` defaults to `<repo>/python` when
+  `PROSAIL_PY_DIR` is empty.
+
+If you only want to inspect the Stage-1 crop+thermal+PV coupling and skip
+the radiative pre-compute, ProSAIL is not needed at runtime; the wrapper
+is only invoked from `Main_load_files{,2,3,4}.m`.
+
+Citation:
+
+> Nieto, H. pyPro4SAIL: Vectorized versions of the Prospect5 and 4SAIL
+> Radiative Transfer Models. Zenodo, DOI 10.5281/zenodo.11279249.
 
 ## Inputs required to run end-to-end
 
@@ -115,17 +155,17 @@ evapotranspiration, per-panel PV energy, and season totals.
 
 > The MATLAB source code used to produce the baseline APV-SS simulation
 > results in this paper is openly available on GitHub at
-> `https://github.com/<USER>/<REPO>` under the MIT License. The repository
-> contains the radiative pre-compute, coupled crop–thermal–PV solver, and
-> single-day lettuce and tomato growth models (toggled via a top-level flag).
-> Meteorological forcing (TMY3 Yuma, AZ) and hourly spectral irradiance
-> matrices are available from the corresponding author upon reasonable
-> request; the pre-computed hourly intermediates (~tens of GB per
+> `https://github.com/eshwarcodes/APV-SS-ECMX-baseline` under the MIT License.
+> The repository contains the radiative pre-compute, coupled crop–thermal–PV
+> solver, and single-day lettuce and tomato growth models (toggled via a
+> top-level flag), together with the thin Python wrapper used to invoke
+> ProSAIL for canopy radiative transfer. The upstream pyPro4SAIL package
+> (Nieto, DOI 10.5281/zenodo.11279249; GPL-3) is referenced rather than
+> redistributed. Meteorological forcing (TMY3 Yuma, AZ) and hourly spectral
+> irradiance matrices are available from the corresponding author upon
+> reasonable request; the pre-computed hourly intermediates (~tens of GB per
 > configuration) are not redistributed but can be regenerated from the
 > bundled radiative pre-compute scripts.
-
-Replace `<USER>/<REPO>` with the final GitHub path after the repository is
-pushed.
 
 ## License
 
