@@ -151,22 +151,6 @@ The driver writes one `baseline_<CONFIG>_<crop>.mat` under `output/`
 containing the daily growth state, canopy/soil temperatures,
 evapotranspiration, per-panel PV energy, and season totals.
 
-## Data Availability Statement (suggested text)
-
-> The MATLAB source code used to produce the baseline APV-SS simulation
-> results in this paper is openly available on GitHub at
-> `https://github.com/eshwarcodes/APV-SS-ECMX-baseline` under the MIT License.
-> The repository contains the radiative pre-compute, coupled crop–thermal–PV
-> solver, and single-day lettuce and tomato growth models (toggled via a
-> top-level flag), together with the thin Python wrapper used to invoke
-> ProSAIL for canopy radiative transfer. The upstream pyPro4SAIL package
-> (Nieto, DOI 10.5281/zenodo.11279249; GPL-3) is referenced rather than
-> redistributed. Meteorological forcing (TMY3 Yuma, AZ) and hourly spectral
-> irradiance matrices are available from the corresponding author upon
-> reasonable request; the pre-computed hourly intermediates (~tens of GB per
-> configuration) are not redistributed but can be regenerated from the
-> bundled radiative pre-compute scripts.
-
 ## License
 
 MIT — see `LICENSE`.
