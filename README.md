@@ -21,9 +21,10 @@ the coupled simulation.
 ├── data/                    Reference inputs (hot-mirror optics, PV module
 │                            spectrum, soil + canopy spectra). Large inputs are
 │                            documented but NOT bundled — see data/README.md.
-├── python/                  Thin Python wrapper (prosail_run.py) that the
-│                            MATLAB bridge calls into. Needs upstream pyPro4SAIL
-│                            installed separately — see "ProSAIL" below.
+├── python/                  ProSAIL bridge (prosail_run.py) + SMARTS driver
+│                            notebook (smarts_yuma_driver.ipynb). Both rely on
+│                            external upstream packages — see "ProSAIL" and
+│                            "Spectral inputs (SMARTS)" below.
 ├── output/                  Created at runtime. Holds the final baseline
 │                            .mat per crop/config.
 ├── LICENSE                  MIT.
@@ -124,6 +125,46 @@ Citation:
 
 > Nieto, H. pyPro4SAIL: Vectorized versions of the Prospect5 and 4SAIL
 > Radiative Transfer Models. Zenodo, DOI 10.5281/zenodo.11279249.
+
+## Spectral inputs (SMARTS)
+
+The hourly wavelength-resolved direct and diffuse irradiance matrices
+consumed by Stage 0 (`dirHorznIrradNormHourlyMod`,
+`difHorznIrradNormHourlyMod` inside `plots_base.mat`) were generated
+offline using **SMARTS 2.9.5** (Simple Model of the Atmospheric Radiative
+Transfer of Sunshine; C. Gueymard), driven hour-by-hour with NSRDB
+meteorology for the Yuma, AZ site.
+
+SMARTS itself is **not bundled** in this repository. Its license
+(`AAgreement_LICENSE.txt`, clause 4) prohibits redistribution to third
+parties without the author's explicit agreement. To regenerate the
+spectral matrices, obtain SMARTS directly from NREL:
+
+- https://www.nrel.gov/grid/solar-resource/smarts.html
+
+A reproducible driver notebook for the Yuma case is bundled at
+`python/smarts_yuma_driver.ipynb`. It pins the exact atmospheric inputs
+used in the paper (LAT=32.69°, LON=−114.63°, time zone −7, US Standard
+Atmosphere, S&F_RURAL aerosol model with TAU5=0.1, ground albedo
+type 38, CO2=370 ppm, ASTM-G173 reference spectrum) and uses NREL's
+`pySMARTS` Python wrapper to invoke a local SMARTS install. Install
+`pySMARTS` separately:
+
+```bash
+pip install pySMARTS
+```
+
+Set the `SMARTSPATH` environment variable (or edit the notebook's
+`SMARTSPATH` cell) to the directory containing your `smarts295.exe`.
+
+Citations (required by the SMARTS license):
+
+> Gueymard, C. *Parameterized Transmittance Model for Direct Beam and
+> Circumsolar Spectral Irradiance.* Solar Energy 71(5):325–346, 2001.
+>
+> Gueymard, C. *SMARTS, A Simple Model of the Atmospheric Radiative
+> Transfer of Sunshine: Algorithms and Performance Assessment.*
+> Professional Paper FSEC-PF-270-95. Florida Solar Energy Center, 1995.
 
 ## Inputs required to run end-to-end
 
