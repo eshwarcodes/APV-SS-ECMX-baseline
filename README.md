@@ -48,8 +48,13 @@ written to four per-hour `.mat` directories:
 | `PVPerformance/`        | per-panel single-diode results, absorbed spectra |
 | `viewfactor_groundPV/`  | sparse ground↔panel view factor cells |
 
-This stage hard-codes scratch paths (`E:\...`) that you must replace with
-local paths before running.
+Each Stage-0 script opens with an `EDIT THESE PATHS BEFORE RUNNING` config
+block (`PLOTS_BASE`, `HOTMIRROR_XLSX`, `SCRATCH_DIR`, and `SCRATCH_DIR1` where
+applicable). Defaults are relative (`pwd`-based) — set them to your local
+paths or place the files on the MATLAB path before running.
+`Main_load_files{2,3,4}.m` are hot-mirror sensitivity variants
+(`Hotmirror_T_R_case{2,3,4}.xlsx`); the published baseline uses
+`Hotmirror_T_R_original.xlsx` (bundled in `data/`).
 
 **Stage 1 — daily coupling** (`run_apvss_baseline.m`). Loads the hourly
 outputs from Stage 0, aggregates to daily totals, builds the active crop

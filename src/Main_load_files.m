@@ -1,16 +1,29 @@
 clear; close all;
-addpath('E:\Yuma_APVSS_dual_axis\022226\baseline_crop')
-addpath('E:\Yuma_APVSS_dual_axis\Yuma_APVSS_Dual_axis_p1_72134')
 
-load 'E:\Yuma_APVSS_dual_axis\022226\baseline_crop\plots_base.mat'
-filename_HM = 'E:\Yuma_APVSS_dual_axis\Yuma_APVSS_Dual_axis_p1_72134\Hotmirror_T_R_case1.xlsx';
+%% ==== EDIT THESE PATHS BEFORE RUNNING =============================
+% PLOTS_BASE       Full path to plots_base.mat (meteorology + geometry +
+%                  module specs + crop physiology scalars).
+% HOTMIRROR_XLSX   Hot-mirror reflectance/transmittance spreadsheet.
+%                  This script targets the "case 1" sensitivity variant;
+%                  Main_load_files{2,3,4}.m use case{2,3,4} respectively.
+%                  For the published baseline use Hotmirror_T_R_original.xlsx.
+% SCRATCH_DIR      Output directory tree (sunVectors/, viewfactor_groundPV/,
+%                  panelIrradiance/, PVPerformance/, etc.). Per-hour .mat
+%                  files are written here.
+PLOTS_BASE     = 'plots_base.mat';
+HOTMIRROR_XLSX = 'Hotmirror_T_R_case1.xlsx';
+SCRATCH_DIR    = fullfile(pwd, 'scratch', 'uniform_plus');
+%% ==================================================================
+
+load(PLOTS_BASE)
+filename_HM = HOTMIRROR_XLSX;
 
 % Read data starting from row 2 to ignore the first row (assumed to be headers or junk)
 
 % R_unpol_smoothed (starts from A2)
 R_HM_allangles = readmatrix(filename_HM, 'Sheet', 'Reflectance', 'Range', 'A2');
 T_HM_allangles = readmatrix(filename_HM, 'Sheet', 'Transmittance', 'Range', 'A2');
-scratchDir = 'E:\Yuma_APVSS_dual_axis\022226\baseline_radiative\uniform_plus';
+scratchDir = SCRATCH_DIR;
 
 % Define the folder name
 folderName = fullfile(scratchDir, 'viewfactor_groundPV');

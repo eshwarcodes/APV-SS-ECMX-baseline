@@ -1,17 +1,29 @@
 clear; close all;
-addpath('E:\Yuma_APVSS_dual_axis\022226\baseline_crop')
-addpath('E:\Yuma_APVSS_dual_axis\Yuma_APVSS_Dual_axis_p1_72134')
 
-load 'E:\Yuma_APVSS_dual_axis\022226\baseline_crop\plots_base.mat'
-filename_HM = 'E:\Yuma_APVSS_dual_axis\Yuma_APVSS_Dual_axis_p1_72134\Hotmirror_T_R_case2.xlsx';
+%% ==== EDIT THESE PATHS BEFORE RUNNING =============================
+% PLOTS_BASE       Full path to plots_base.mat.
+% HOTMIRROR_XLSX   Hot-mirror spreadsheet for this case (case 2).
+% SCRATCH_DIR      Reused (geometry-only) outputs: viewfactor_groundPV,
+%                  ground_shadows, skyViewFactor, sunVectors,
+%                  self_shading_direct, sky_diffuse_shading.
+% SCRATCH_DIR1     Case-specific outputs: panelIrradiance, groundIrradiance,
+%                  spectral_components, PVPerformance, Photosynthesis.
+PLOTS_BASE     = 'plots_base.mat';
+HOTMIRROR_XLSX = 'Hotmirror_T_R_case2.xlsx';
+SCRATCH_DIR    = fullfile(pwd, 'scratch', 'uniform_plus');
+SCRATCH_DIR1   = fullfile(pwd, 'scratch', 'uniform_minus');
+%% ==================================================================
+
+load(PLOTS_BASE)
+filename_HM = HOTMIRROR_XLSX;
 
 % Read data starting from row 2 to ignore the first row (assumed to be headers or junk)
 
 % R_unpol_smoothed (starts from A2)
 R_HM_allangles = readmatrix(filename_HM, 'Sheet', 'Reflectance', 'Range', 'A2');
 T_HM_allangles = readmatrix(filename_HM, 'Sheet', 'Transmittance', 'Range', 'A2');
-scratchDir = 'E:\Yuma_APVSS_dual_axis\022226\baseline_radiative\uniform_plus';
-scratchDir1 = 'E:\Yuma_APVSS_dual_axis\022226\baseline_radiative\uniform_minus';
+scratchDir = SCRATCH_DIR;
+scratchDir1 = SCRATCH_DIR1;
 % Define the folder name
 folderName = fullfile(scratchDir, 'viewfactor_groundPV');
 if ~exist(folderName, 'dir')
