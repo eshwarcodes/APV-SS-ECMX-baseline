@@ -1,0 +1,24 @@
+# MATLAB
+*.asv
+*.mex*
+*.mat
+slprj/
+sccprj/
+
+# Repo outputs
+output/
+**/output/
+
+# OS junk
+Thumbs.db
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+*~
+
+# Allow small reference inputs that we *do* ship
+!data/*.xlsx
+!data/*.csv
+!data/*.txt
